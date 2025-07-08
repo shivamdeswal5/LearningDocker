@@ -1,32 +1,32 @@
+
 services:
-  postgres:
-    image: postgres
-    restart: always
+  nestjs:
+    build: .
     ports:
-      - '5432:5432'
+      - "${APP_PORT}:3000"
+    depends_on:
+      - postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: deswal
-      POSTGRES_DB: postgres
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+    volumes:
+      - .:/app
+    command: npm run start:dev
+
+  postgres:
+    image: postgres:15
+    ports:
+      - '5433:5432'  # host:container
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-  app:
-    build: .
-    depends_on:
-      - postgres
-    ports:
-      - '3000:3000'
-    environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USERNAME: postgres
-      DB_PASSWORD: deswal
-      DB_NAME: postgres
-    volumes:
-      - .:/app
-      - /app/node_modules
-    command: npm run start:dev
-
 volumes:
   pgdata:
+ 
