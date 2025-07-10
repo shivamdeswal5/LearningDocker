@@ -3,7 +3,7 @@ services:
   nestjs:
     build: .
     ports:
-      - "${APP_PORT}:3000"
+      - "${APP_PORT}:3001"
     depends_on:
       - postgres
     environment:
@@ -14,6 +14,8 @@ services:
       DB_NAME: ${DB_NAME}
     volumes:
       - .:/app
+    networks:
+      - shared-net
     command: npm run start:dev
 
   postgres:
@@ -24,9 +26,14 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
+    networks:
+      - shared-net
     volumes:
       - pgdata:/var/lib/postgresql/data
 
 volumes:
   pgdata:
- 
+
+networks:
+  shared-net:
+    external: true
